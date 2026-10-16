@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ALBA – Asistente de dietas y menú vegetariano</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F0;--card:#fff;--ink:#2a3328;--mut:#66705f;--line:#e2ddd2;--olive:#3B4A39;--terra:#C86D51;--bronze:#9E7B4F;--chip:#ece8dd;--hero:#3B4A39;--hero-ink:#F7F5F0;--warn:#fff4dc;--good:#e8f0e3;--bad:#f8e6e1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b211a;--card:#252d24;--ink:#f1eee6;--mut:#a9b3a0;--line:#37412f;--chip:#2f382d;--hero:#2c372b;--bronze:#c19c6b;--warn:#3a3321;--good:#26341f;--bad:#3b2621}}
+:root[data-theme="dark"]{--bg:#1b211a;--card:#252d24;--ink:#f1eee6;--mut:#a9b3a0;--line:#37412f;--chip:#2f382d;--hero:#2c372b;--bronze:#c19c6b;--warn:#3a3321;--good:#26341f;--bad:#3b2621}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;margin:0;line-height:1.1}
+.wrap{max-width:760px;margin:0 auto}
+.hero{background:var(--hero);color:var(--hero-ink);padding:30px 20px 24px;text-align:center}
+.hero h1{font-size:clamp(44px,12vw,64px);letter-spacing:.22em;margin-right:-.22em}
+.sub{color:#d9b98a;font:italic 21px "Cormorant Garamond",serif;margin:4px 0 12px}
+.hero p{margin:0 auto;max-width:50ch;font-size:15px;opacity:.92}
+.nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.btn,.nav a{display:inline-block;border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;font-size:14px;border:1px solid rgba(255,255,255,.45);color:var(--hero-ink)}
+.btn{background:var(--terra);color:#fff;border-color:var(--terra);cursor:pointer;font-size:15px}
+main{padding:20px}section{margin-bottom:34px}
+h2{font-size:32px;color:var(--olive)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h2{color:#d9b98a}}
+.lead{color:var(--mut);margin:6px 0 14px;font-size:15px}
+.find{display:flex;gap:8px;margin-bottom:12px}
+.find input{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:11px 16px;font:inherit}
+.find button{border:0;background:var(--terra);color:#fff;border-radius:999px;padding:0 20px;font-weight:700;cursor:pointer}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px;text-align:left;cursor:pointer;font:600 15px system-ui}
+.tile span{display:block;font-size:24px}
+.tile[aria-pressed="true"]{border:2px solid var(--terra);background:var(--good)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--bronze);outline-offset:2px}
+#res{margin-top:16px}.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.box h3{font-size:25px;margin-bottom:6px}
+.dish{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:13px;margin-top:10px;display:flex;justify-content:space-between;gap:12px}
+.dish.ok{background:var(--good)}.dish h4{margin:0;font:700 22px "Cormorant Garamond",serif}
+.dish p{margin:4px 0;color:var(--mut);font-size:14px}.why{font-size:14px;font-weight:600}
+.price{font:700 21px "Cormorant Garamond",serif;color:var(--bronze);white-space:nowrap}
+.new{background:var(--terra);color:#fff;border-radius:6px;font-size:11px;padding:1px 6px;margin-left:6px;vertical-align:middle;font-family:system-ui}
+.ul{margin:6px 0 0;padding-left:20px}.ul li{margin:3px 0}
+.avoid{background:var(--bad)}.warn{background:var(--warn);font-size:14px}
+.chips{display:flex;gap:8px;margin-bottom:6px}.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:600;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--olive);color:#fff;border-color:var(--olive)}
+h3.cat{font-size:26px;margin:18px 0 0;color:var(--bronze)}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px;margin-bottom:10px}summary{cursor:pointer;font:700 24px "Cormorant Garamond",serif;padding:10px 0}
+#nfab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5;border:0;background:var(--terra);color:#fff;border-radius:999px;padding:13px 20px;font:700 16px system-ui;box-shadow:0 6px 18px rgba(0,0,0,.28);cursor:pointer}
+#nchat{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}#nchat.open{display:flex}
+.np{background:var(--bg);width:100%;max-width:600px;height:88%;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.nh button{border:0;background:var(--chip);color:var(--ink);border-radius:50%;width:34px;height:34px;cursor:pointer}
+#nlog{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:92%;padding:10px 14px;border-radius:16px;font-size:15px;white-space:pre-line}
+.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start}.me{background:var(--olive);color:#fff;align-self:flex-end}
+#nopts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-top:1px solid var(--line);max-height:30%;overflow-y:auto}
+#nopts button{border:1px solid var(--terra);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:14px;font-weight:600}
+#nf{display:flex;gap:8px;padding:0 16px 12px}#nf input{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 14px;font:inherit}
+#nf button{border:0;background:var(--terra);color:#fff;border-radius:999px;padding:0 18px;font-weight:700;cursor:pointer}
+footer{font-size:13px;color:var(--mut);padding:0 20px 28px;text-align:center}
+</style></head><body>
+<header class="hero"><div class="wrap">
+<h1>ALBA</h1><div class="sub">Cocina de Origen &amp; Brasa</div>
+<p>Conversa con <b>Nutri</b>, nuestro anfitrión gastronómico: cuéntale cómo te sientes y qué necesitas, y juntos armamos tu plato ideal.</p>
+<div class="nav"><a href="#" id="hn">💬 Habla con Nutri</a><a href="#dieta">Asistente de dieta</a><a href="#veg">Menú vegetariano</a><a href="#carta">Carta completa</a></div>
+</div></header>
+<main><div class="wrap">
+<section id="dieta"><h2>¿Cómo te cuidas?</h2>
+<p class="lead">Escribe tu condición o elige una opción.</p>
+<form class="find" onsubmit="return false"><input id="q" placeholder="Ej.: soy diabético, me operaron, estoy embarazada…" aria-label="Condición o dieta" autocomplete="off"><button id="go">Buscar</button></form>
+<div class="tiles" id="tiles"></div><div id="res"></div></section>
+
+<section id="veg"><h2>Menú vegetariano y vegano</h2>
+<p class="lead">Platos sin carne ni pescado. Los marcados <span class="new">NUEVO</span> son propuestas del menú vegetal de ALBA.</p>
+<div class="chips"><button class="chip" id="c1" aria-pressed="true">🌱 Todo vegetariano</button><button class="chip" id="c2" aria-pressed="false">🌿 Solo vegano</button></div>
+<div id="vegl"></div></section>
+
+<section id="carta"><h2>Carta completa</h2><div id="full"></div></section>
+<section id="faq"><h2>Preguntas frecuentes</h2>
+<details><summary>¿Pueden adaptar un plato a mi dieta?</summary><p>Sí. Avisa tu condición o alergia al mesero y el chef ajustará la preparación cuando sea posible: sin sal añadida, sin mantequilla o con la guarnición cambiada por vegetales.</p></details>
+<details><summary>¿Cómo reservo una mesa?</summary><p>Por WhatsApp al +57 310 892 4501. Cuéntanos cuántas personas son y si alguien sigue una dieta especial.</p></details>
+<details><summary>¿Los platos tienen análisis nutricional?</summary><p>No. Las etiquetas y recomendaciones son orientativas. Para indicaciones médicas, consulta a tu médico o nutricionista.</p></details>
+<details><summary>¿Nutri reemplaza a mi nutricionista?</summary><p>No. Nutri te ayuda a elegir dentro de nuestra carta con ideas gastronómicas; tu médico o nutricionista siempre tiene la última palabra.</p></details></section>
+<div class="box warn"><b>Reservas y alergias:</b> WhatsApp +57 310 892 4501 · Calle de la Ribera #14-28, Barrio El Olivar · Mar–Dom (lunes cerrado).<br><a class="btn" id="wa" href="#" style="margin-top:10px">Reservar por WhatsApp</a></div>
+</div></main>
+<footer>Las recomendaciones son orientativas y no reemplazan la indicación de tu médico o nutricionista. Los platos no cuentan con análisis nutricional: confirma ingredientes y preparación con el mesero y el chef.<br>🌱 Vegetariano · 🌿 Vegano · 🌾 Sin gluten · 🥛 Lactosa · 🐟 Pescado/marisco · 🥜 Frutos secos · 🥚 Huevo</footer>
+
+<button id="nfab">💬 Habla con Nutri</button>
+<div id="nchat" role="dialog" aria-modal="true" aria-label="Nutri"><div class="np"><div class="nh"><h2 style="font-size:26px">Nutri</h2><button id="nclose" aria-label="Cerrar">✕</button></div>
+<div id="nlog" aria-live="polite"></div><div id="nopts"></div>
+<form id="nf" onsubmit="return false"><input id="nq" placeholder="Cuéntame qué necesitas…" aria-label="Mensaje" autocomplete="off"><button>Enviar</button></form></div></div>
+<script>
+const IC={V:"🌱",VG:"🌿",SG:"🌾",L:"🥛",P:"🐟",N:"🥜",H:"🥚"};
+const M=(id,c,n,p,d,t,nw)=>({id,c,n,p,d,t,nw});
+const MENU=[
+M("bu","Entradas","Burrata Texturizada",38000,"Burrata sobre compota de tomate de árbol asado, pesto de albahaca criolla y piñones, con pan de masa madre.",["V","L","N"]),
+M("ta","Entradas","Tartar de Pesca & Aguacate",42000,"Pesca fresca marinada en cítricos, aceite de oliva, aguacate ahumado y crocantes de plátano verde.",["SG","P"]),
+M("ca","Entradas","Carpaccio de Res & Alcaparras",39000,"Lomo de res madurado, vinagreta de mostaza, parmesano y rúgula.",["SG","L"]),
+M("tb","Entradas","Tabla Campo & Olivar (para 2)",65000,"Quesos artesanales, jamón serrano, aceitunas, hummus al pimentón y foccacia. Opción vegetariana a solicitud.",["L","N"]),
+M("es","Entradas","Espinacas & Setas a la Brasa",34000,"Setas al jerez con crema de coliflor tatemada, aceite de trufa blanca y garbanzos crocantes.",["VG","SG"]),
+M("pu","Entradas","Pulpo a las Brasas",48000,"Pulpo glaseado en pimentón, emulsión de papas criollas y pimientos asados.",["SG","P"]),
+M("cz","Entradas","Crema de Zapallo & Coco",28000,"Calabaza asada, jengibre, semillas de girasol y cilantro.",["VG","SG"]),
+M("pv","Principales","Paella de Verduras de la Huerta",44000,"Arroz bomba con pimentón ahumado, alcachofa, pimientos, arvejas y azafrán, en porción individual.",["VG","SG"],1),
+M("tm","Entradas","Tempura de Vegetales & Salsa Yuzu",32000,"Verduras de temporada en tempura ligera, con salsa cítrica de yuzu.",["V","H"],1),
+M("be","Principales","Berenjena a la Brasa & Tahini",44000,"Berenjena ahumada, tahini, granada, hierbas frescas y pan pita tostado.",["VG"],1),
+M("cu","Principales","Curry de Garbanzos & Coco",42000,"Garbanzos, ahuyama y espinaca en salsa suave de coco, con arroz integral.",["VG","SG"],1),
+M("ar","Principales","Arepa de Choclo con Hogao",38000,"Arepa de maíz tierno, hogao criollo, queso fundido y aguacate.",["V","L"],1),
+M("la","Principales","Lasaña de la Huerta",46000,"Capas de vegetales asados, ricotta, salsa de tomate y albahaca.",["V","L","H"],1),
+M("en","Principales","Ensalada de Remolacha & Cabra",36000,"Remolacha asada, queso de cabra, nueces, rúgula y vinagreta de miel.",["V","L","N"],1),
+M("gn","Principales","Gnocchi de Camote",52000,"Gnocchis dorados en mantequilla, salsa de queso de cabra y nueces caramelizadas.",["V","L","N","H"]),
+M("bw","Principales","Bowl Vegano de Garbanzos",45000,"Arroz integral, garbanzos con comino, berenjena asada, aguacate y tahini.",["VG","SG"]),
+M("oj","Parrilla y mar","Ojo de Bife a la Leña (300 g)",85000,"Corte madurado con chimichurri y papas criollas aplastadas.",["SG"]),
+M("co","Parrilla y mar","Costillar de Cerdo en Panela",64000,"Cocción lenta de 12 h, terminado a la brasa con reducción de naranja y puré de camote.",["SG"]),
+M("po","Parrilla y mar","Pollo Orgánico al Limón & Romero",49000,"Pechuga y muslo a la parrilla con vegetales salteados.",["SG"]),
+M("pe","Parrilla y mar","Pesca Dorada en Salvia",68000,"Filete a la plancha con mantequilla de salvia, puré de yuca y espárragos.",["SG","L","P"]),
+M("at","Parrilla y mar","Atún Sellado en Sésamo",72000,"Atún sellado con ensalada tibia de quinoa, edamame, mango y vinagreta de jengibre-soya.",["SG","P"]),
+M("ri","Parrilla y mar","Risotto de Calamar & Tinta",62000,"Arroz carnaroli, calamar a la parrilla y aioli de ajo negro.",["SG","L","P"]),
+M("pa","Parrilla y mar","Pappardelle al Ragú de Asado",56000,"Pasta fresca con estofado de res a la canela y pecorino.",["L","H"]),
+M("vo","Postres","Volcán de Cacao & Avellana",24000,"Chocolate 70 % con corazón de avellana y helado de flor de leche.",["V","L","N","H"]),
+M("ci","Postres","Cítricos del Campo & Merengue",22000,"Cremoso de maracuyá y mandarina, crumble de almendras y sorbete de albahaca.",["V","SG","L","N","H"]),
+M("tv","Postres","Tarta Vasca de Queso",26000,"Tarta de queso asada con coulis de frutos rojos.",["V","L","H"]),
+M("fr","Postres","Frutas de Temporada & Sorbete",18000,"Frutas frescas con sorbete de limón, sin azúcar añadida.",["VG","SG"],1),
+M("co1","Bebidas","Cóctel Olivar",36000,"Ginebra artesanal, vermut blanco, infusión de aceituna y limón.",[]),
+M("me","Bebidas","Mezcalita Fuego & Pasión",38000,"Mezcal, maracuyá, sirope de chile y escarchado de sal y tajín.",[]),
+M("mo","Bebidas","Mocktail Alba (sin alcohol)",18000,"Flor de Jamaica, toronja, sirope de romero y agua con gas.",[]),
+M("li","Bebidas","Limonada de Coco & Jengibre",16000,"Leche de coco, limón criollo y un toque de jengibre.",[])
+];
+const BY=Object.fromEntries(MENU.map(m=>[m.id,m]));
+const is=(m,k)=>k==="V"?m.t.includes("V")||m.t.includes("VG"):m.t.includes(k);
+const food=m=>m.c!=="Bebidas";
+const AV=(ids,r)=>ids.map(i=>BY[i].n).join(", ")+" — "+r;
+const PR={
+dia:{i:"🩸",n:"Diabetes",kw:/diab|glucosa|insulina/,intro:"Para cuidar la glucosa conviene priorizar proteínas, verduras y fibra, y moderar harinas, papas, arroces, postres y bebidas azucaradas.",
+ ok:{ta:"Proteína fresca con grasas buenas y casi sin harinas.",ca:"Proteína con muy pocos carbohidratos.",es:"Vegetales y setas, con bajo impacto en el azúcar.",po:"Proteína magra con vegetales salteados.",at:"Proteína con quinoa y edamame, ricos en fibra.",cu:"Garbanzos y verduras aportan fibra; pide el arroz en porción pequeña.",bw:"Legumbres y arroz integral, con fibra.",fr:"Postre fresco sin azúcar añadida."},
+ avoid:AV(["vo","tv","ci","gn","pa","ri"],"alto en azúcar o harinas refinadas")+". Bebidas: "+AV(["co1","me","li"],"llevan azúcar o alcohol."),
+ tips:["Pide la guarnición de papa, yuca o puré cambiada por vegetales o ensalada.","Pregunta por salsas y reducciones: pueden llevar panela, miel o azúcar.","Come despacio y empieza por la proteína y las verduras.","Si quieres postre, compártelo y pide la fruta con sorbete."],
+ dr:["Agua natural o con gas","Infusiones sin azúcar","Mocktail Alba pedido sin sirope","Limonada sin azúcar (pídela sin endulzar)"]},
+pos:{i:"🩹",n:"Postoperatorio",kw:/oper(?:ad|aron|o|ar)|cirug|postop|post-op|recuper|bari[aá]tric|ves[ií]cula|gastr/,intro:"Después de una cirugía suelen convenir platos suaves, de poca grasa y fáciles de digerir, en porciones pequeñas. Tu médico te dio indicaciones: esas mandan.",
+ ok:{cz:"Textura suave, tibia y poca grasa; muy fácil de digerir.",pe:"Pescado tierno. Pídelo a la plancha, sin la mantequilla de salvia.",po:"Pídelo sin piel, bien cocido, sin picante y con vegetales blandos."},
+ avoid:AV(["ta","ca","oj","co","pu","ri","tb"],"crudos, duros, grasosos o difíciles de digerir")+". Evita también postres ricos, cócteles y alcohol.",
+ tips:["Pide una porción pequeña o media porción, y come despacio.","Pregunta al chef si puede cocinar sin grasa añadida, sin picante y sin especias fuertes.","Pide cremas o caldos suaves y verduras bien cocidas.","Evita las bebidas con gas y el alcohol."],
+ dr:["Agua natural","Infusiones suaves tibias (manzanilla, hierbabuena)","Limonada de coco pedida sin jengibre"]},
+veg:{i:"🌱",n:"Vegetariano",kw:/vegetar/,intro:"Platos sin carne ni pescado. Incluyen lácteos y huevo.",f:m=>is(m,"V")&&food(m),why:"Sin carne ni pescado.",avoid:"",tips:["Pregunta si algún caldo o salsa se prepara con base de carne.","Pide la tabla Campo & Olivar en versión vegetariana."],dr:["Limonada de coco","Mocktail Alba","Café o infusiones"]},
+van:{i:"🌿",n:"Vegano",kw:/vegan/,intro:"Platos sin ningún ingrediente de origen animal.",f:m=>m.t.includes("VG"),why:"Sin ingredientes de origen animal.",avoid:"",tips:["Confirma con el mesero que no se use mantequilla ni miel en la preparación.","Pregunta por el pan: algunos llevan lácteos."],dr:["Limonada de coco (leche de coco)","Mocktail Alba","Infusiones"]},
+cel:{i:"🌾",n:"Sin gluten",kw:/gluten|cel[ií]ac/,intro:"Platos sin gluten según nuestra carta.",f:m=>m.t.includes("SG"),why:"Preparado sin harinas con gluten.",avoid:"",tips:["Avisa que eres celíaco: la parrilla y los utensilios se comparten y puede haber contacto cruzado.","Pide los platos sin pan ni crocantes de harina."],dr:["Agua, jugos naturales, infusiones","Pregunta por la base de cada cóctel"]},
+lac:{i:"🥛",n:"Sin lactosa",kw:/lactosa|l[aá]cteo|leche/,intro:"Platos sin lácteos según nuestra carta.",f:m=>food(m)&&!m.t.includes("L"),why:"Sin lácteos en su receta.",avoid:"",tips:["Pide los platos sin mantequilla ni queso cuando aplique.","Confirma salsas y panes."],dr:["Limonada de coco (no lleva leche de vaca)","Agua e infusiones"]},
+emb:{i:"🤰",n:"Embarazo",kw:/embaraz|gestaci|gestante/,intro:"Durante el embarazo se evitan los alimentos crudos o poco cocidos y los lácteos sin pasteurizar.",
+ ok:{cz:"Cocida y suave.",po:"Pídelo bien cocido.",pe:"Pídelo bien cocido, nunca a término medio.",es:"Cocido y sin ingredientes de riesgo.",bw:"Vegetal y completamente cocido.",cu:"Cocido, suave y nutritivo.",oj:"Pídelo bien cocido (no término medio)."},
+ avoid:AV(["ta","ca","at","tb","bu"],"crudo, semicrudo o con quesos y embutidos que conviene evitar")+". Evita también cócteles y alcohol.",
+ tips:["Pide carnes y pescados bien cocidos.","Pregunta si los quesos son pasteurizados.","Evita el alcohol; el mocktail es una buena opción."],dr:["Agua natural","Limonada de coco","Mocktail Alba (confirma los ingredientes con tu médico)"]},
+hip:{i:"❤️",n:"Hipertensión",kw:/hipertens|presi[oó]n|sodio|sal\b|coraz[oó]n/,intro:"Conviene moderar la sal, los embutidos, los quesos curados, las salsas saladas y los fritos.",
+ ok:{pe:"Pídelo sin sal añadida y con limón.",po:"A la parrilla; pídelo con poca sal.",es:"Vegetal, con bajo sodio si se pide sin sal.",cz:"Pídela sin sal añadida.",bw:"Vegetal con fibra; pídelo sin salsa salada.",cu:"Vegetal; pide poca sal."},
+ avoid:AV(["ca","tb","at"],"alcaparras, jamón, quesos curados o salsa de soya")+". Y la Mezcalita, por la sal del borde.",
+ tips:["Pide que cocinen con poca sal y sin sal añadida en la mesa.","Evita las salsas saladas y la sal de borde en los cócteles."],dr:["Agua natural","Limonada sin azúcar","Infusiones"]}
+};
+const $=id=>document.getElementById(id),cop=n=>"$"+n.toLocaleString("es-CO");
+const tag=m=>m.t.map(t=>IC[t]).join(" ");
+const dish=(m,why,ok)=>`<article class="dish${ok?" ok":""}"><div><h4>${m.n}${m.nw?'<span class="new">NUEVO</span>':""}</h4><p>${m.d}</p>${why?`<div class="why">✔ ${why}</div>`:""}<div>${tag(m)}</div></div><div class="price">${cop(m.p)}</div></article>`;
+const WA="https://wa.me/573108924501?text="+encodeURIComponent("Hola ALBA, quisiera hacer una reserva.");
+$("wa").href=WA;
+$("tiles").innerHTML=Object.entries(PR).map(([k,p])=>`<button class="tile" data-k="${k}" aria-pressed="false"><span>${p.i}</span>${p.n}</button>`).join("");
+function show(k){
+document.querySelectorAll(".tile").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));
+const p=PR[k],L=p.f?MENU.filter(p.f).map(m=>[m,p.why]):Object.entries(p.ok).map(([i,r])=>[BY[i],r]);
+const med=["dia","pos","emb","hip"].includes(k);
+$("res").innerHTML=`<div class="box"><h3>${p.i} ${p.n}</h3><p style="margin:0">${p.intro}</p></div>
+<h3 style="font-size:26px">Te recomendamos</h3>${L.map(([m,r])=>dish(m,r,1)).join("")||"<p>Pregunta al mesero por opciones.</p>"}
+<div class="box" style="margin-top:12px"><h3>Pídelo así</h3><ul class="ul">${p.tips.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+<div class="box"><h3>Bebidas</h3><ul class="ul">${p.dr.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+${p.avoid?`<div class="box avoid"><h3>Mejor evitar</h3><p style="margin:0;font-size:14px">${p.avoid}</p></div>`:""}
+<div class="box warn">${med?"<b>Importante:</b> esta es una orientación general. Sigue siempre las indicaciones de tu médico o nutricionista. ":""}Avisa tu condición al mesero antes de pedir; el chef puede ajustar la preparación.</div>`;
+$("res").scrollIntoView({behavior:"smooth",block:"start"})}
+function find(){const v=$("q").value.toLowerCase().trim();if(!v)return;
+const k=Object.keys(PR).find(k=>PR[k].kw.test(v));
+if(k)show(k);else $("res").innerHTML='<div class="box warn">No reconocí esa condición. Elige una de las opciones de arriba o escríbenos por WhatsApp para que el chef te asesore: <a href="'+WA+'">abrir chat</a>.</div>'}
+document.addEventListener("click",e=>{const t=e.target.closest(".tile");if(t)show(t.dataset.k)});
+$("go").onclick=find;$("q").addEventListener("keydown",e=>{if(e.key==="Enter")find()});
+let vg=false;
+function renderV(){$("c1").setAttribute("aria-pressed",!vg);$("c2").setAttribute("aria-pressed",vg);
+const L=MENU.filter(m=>vg?m.t.includes("VG"):is(m,"V")&&food(m));
+const cs=[...new Set(L.map(m=>m.c))];
+$("vegl").innerHTML=cs.map(c=>`<h3 class="cat">${c}</h3>`+L.filter(m=>m.c===c).map(m=>dish(m)).join("")).join("")}
+$("c1").onclick=()=>{vg=false;renderV()};$("c2").onclick=()=>{vg=true;renderV()};
+$("full").innerHTML=[...new Set(MENU.map(m=>m.c))].map(c=>`<details><summary>${c}</summary>${MENU.filter(m=>m.c===c).map(m=>dish(m)).join("")}</details>`).join("");
+renderV();
+
+/* ===== Nutri ===== */
+const TN={V:"vegetariano",VG:"vegano",SG:"sin gluten",L:"contiene lactosa",P:"pescado/marisco",N:"frutos secos",H:"huevo"};
+const SYSN=`Eres "Nutri", asistente y anfitrión gastronómico de ALBA – Cocina de Origen & Brasa (Bogotá): cálido, empático, cercano y muy conversacional, como un chef amable al que le apasionan la comida y el bienestar de las personas. Tu meta no es solo dar un menú: es conversar, entender cómo se siente hoy la persona, sus gustos y necesidades médicas o de estilo de vida, y diseñar juntos la opción perfecta.
+TONO: natural, cercano, entusiasta y compasivo; lenguaje accesible, sin academicismos fríos; mensajes cortos; responde en el idioma de la persona.
+FLUJO: 1) Saluda con calidez. Si menciona una condición especial (recién operado, diabetes...), valida cómo se siente ANTES de hablar de comida y pregunta detalles clave antes de dar un plato (en postoperatorio: si su médico indicó dieta líquida clara, líquida completa, blanda o ya pasa a sólidos). 2) NO entregues un menú gigante de golpe sin contexto: haz repreguntas. Propón 1 o 2 ideas apetitosas explicando de forma sencilla por qué le convienen e incluye siempre una bebida natural o infusión. Si ayuda, pregunta por presupuesto o por lo que se le antoja (caliente, fresco, ligero). 3) Termina SIEMPRE con una pregunta abierta que invite a responder (ej.: "¿Te llama la atención o buscamos algo más calentito o fresco?", "¿Hay algún ingrediente que no te guste nada?").
+SALUD (con tacto humano): Diabetes: platos ricos, coloridos y con buena fibra/proteína, explicando que ayudan a mantener la energía estable sin picos de azúcar; sin azúcares añadidos ni carbohidratos refinados. Postoperatorio: digestión fácil y cicatrización (proteínas suaves), poca grasa e irritantes; sugiere validar con su médico si tiene dudas sobre su fase. Vegetariano/vegano: celebra la variedad y asegura platos saciantes, llenos de sabor y con buenas proteínas vegetales. Aclara con naturalidad (sin repetirlo en cada mensaje) que tus ideas son gastronómicas y no sustituyen a su médico o nutricionista; recuerda confirmar alergias con el mesero y el chef.
+CARTA: usa primero los platos de la carta de ALBA; si no cubren el requerimiento puedes sugerir ideas "fuera de carta" aclarándolo. No inventes precios ni ingredientes de la carta.
+EJEMPLO: Usuario: "me operaron de la vesícula hace 4 días y no sé qué puedo comer". Tú validas con calidez (los primeros días después de la cirugía piden mucho cuidado; preguntas cómo se ha sentido hoy), explicas que la clave es una digestión liviana (sin grasas pesadas ni irritantes, con buena nutrición), propones por ejemplo pollo suave a la plancha o al vapor con puré de auyama y un tecito tibio de manzanilla, y cierras preguntando si ya tolera sólidos o prefiere una cremita ligera.
+DATOS DE ALBA: WhatsApp +57 310 892 4501; Calle de la Ribera #14-28, Barrio El Olivar; martes a domingo, lunes cerrado.
+CARTA (nombre | categoría | precio COP | descripción | etiquetas):
+`+MENU.map(m=>`${m.n} | ${m.c} | ${cop(m.p)} | ${m.d} | ${m.t.map(t=>TN[t]).join(", ")||"sin etiquetas"}`).join("\n");
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const fmt=t=>esc(t).replace(/^#{1,4}\s*(.*)$/gm,"<b>$1</b>").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/^\s*[*-]\s+/gm,"• ").replace(/^-{3,}$/gm,"").replace(/\*(.+?)\*/g,"<i>$1</i>");
+const NL=$("nlog"),HIST=[];
+const S={pf:[],ph:null,bud:null,dis:[],shown:new Set(),pref:[],said:new Set(),cat:null,step:0};
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function bot(h){const d=document.createElement("div");d.className="m bot";d.innerHTML=h;NL.appendChild(d);NL.scrollTop=1e9;return d}
+function me(t){const d=document.createElement("div");d.className="m me";d.textContent=t;NL.appendChild(d);NL.scrollTop=1e9}
+function opts(a){$("nopts").innerHTML=a.map(x=>`<button>${x}</button>`).join("")}
+const START=["Soy diabético/a","Me operaron hace pocos días","Busco algo vegetariano","Busco algo vegano","Tengo un presupuesto"];
+const AFTER=["Otra opción","Algo más ligero","Algo más calentito","Tengo un presupuesto","Me suena perfecto"];
+const PHO=["Dieta líquida clara","Dieta líquida completa","Dieta blanda","Ya paso a sólidos","No estoy seguro/a"];
+const EMP={dia:"¡Qué bueno que te cuidas! Comer rico y mantener la energía estable es totalmente posible.",pos:"",veg:"¡Me encanta! La cocina vegetal tiene mucho sabor y hay platos que sí llenan.",van:"¡Qué gusto! Hay platos veganos llenos de sabor y muy saciantes.",cel:"Claro que sí, vamos a cuidar eso con cariño.",lac:"Con gusto, armamos algo sin lácteos.",emb:"¡Felicidades por esta etapa! Vamos a cuidarte a ti y al bebé.",hip:"Claro, se puede comer delicioso con poca sal."};
+const CQ=["¿Qué te parece? ¿Te llama la atención o buscamos algo más calentito o más fresco?","¿Hay algún ingrediente de estos que no te guste nada?","¿Cómo lo ves? ¿Lo ajustamos a tu presupuesto o a tus gustos?"];
+const dTag=w=>/pescad|marisc|camaron|pulpo|calamar|atun/.test(w)?"P":/nuez|nuece|almendr|avellan|pinon|mani|fruto/.test(w)?"N":/huevo/.test(w)?"H":/lacte|queso|leche/.test(w)?"L":null;
+const bad=m=>S.dis.some(w=>{const t=dTag(w);return t?m.t.includes(t):norm(m.n+" "+m.d).includes(w)});
+function parse(t){const l=norm(t);let ch=false;const b0=JSON.stringify([S.bud,S.dis]);
+const fd=Object.keys(PR).filter(k=>PR[k].kw.test(l));
+if(fd.some(k=>!S.pf.includes(k))){if(!S.pf.length||!/tambien|ademas/.test(l)){S.pf=fd;S.said=new Set();S.shown.clear();if(!fd.includes("pos"))S.ph=null}else fd.forEach(k=>{if(!S.pf.includes(k))S.pf.push(k)});ch=true}
+const ph=/clara/.test(l)?0:/completa|liquida|sopa|caldo/.test(l)?1:/blanda|pure/.test(l)?2:/solido|ya como|ya puedo/.test(l)?3:/no se\b|no estoy segur|no me dijo/.test(l)?1:null;
+if(S.pf.includes("pos")&&ph!==null){S.ph=ph;ch=true}
+let m=l.match(/(\d{2,3})\s*(?:mil|k)\b/);if(m){S.bud=+m[1]*1000;ch=true}else{m=l.match(/\$?\s*(\d{1,3}(?:[.,]\d{3})+)/);if(m){S.bud=+m[1].replace(/[.,]/g,"");ch=true}}
+if(/sin limite|sin presupuesto|no importa el precio/.test(l)){S.bud=null;ch=true}
+const re=/(?:no me gust\w*|no como|sin|alergi\w*(?: a)?|odio|evita\w*)\s+(?:nada\s+)?(?:el |la |los |las |de )?([a-z]+)/g;let x;
+while((x=re.exec(l))){const w=x[1].replace(/s$/,"");if(w.length>2&&!["azucar","sal","grasa","picante","nad","mucha","gluten","limit","presupuest"].includes(w)&&!S.dis.includes(w)){S.dis.push(w);ch=true}}
+const light=/ligero|liviano|fresco|fresca|frio|ensalada/.test(l),warm=/calent|tibio|sopa|crema|caldo/.test(l);
+if(light){S.pref=["ta","ca","en","fr","bw","at","tm"];ch=true}if(warm){S.pref=["cz","es","cu","po","pe","pv"];ch=true}
+const cat=[];if(/entrada/.test(l))cat.push("Entradas");if(/postre/.test(l))cat.push("Postres");if(cat.length){S.cat=cat;ch=true}
+const it={mood:/\bmal\b|nausea|dolor|miedo|nervio|cansad|debil|triste|asust|ansios|incomod/.test(l)?"low":/\bbien\b|mejor|animad|genial|contento/.test(l)?"ok":null,
+more:/\botra\b|\botro\b|mas opcion|diferente|no me convence/.test(l),yes:!/no me gust/.test(l)&&/me suena|me gusta|perfecto|me encant|dale|excelente|^si\b|listo/.test(l),
+thanks:/gracias|chao|adios|hasta luego/.test(l),book:/reserv|whatsapp|ordenar|pedir mesa/.test(l),budget:/presupuesto|barat|econom/.test(l)&&!S.bud,reset:/empezar de nuevo|reiniciar|otra persona/.test(l),hi:/^(hola|buenas|buenos|hey)/.test(l)};
+if(JSON.stringify([S.bud,S.dis])!==b0)S.shown.clear();
+it.ch=ch||it.more||it.light||it.warm;return it}
+const WAL=`<a href="${WA}" target="_blank" rel="noopener">escríbenos por WhatsApp</a>`;
+function cands(k){const p=PR[k];let L=p.f?MENU.filter(p.f):Object.keys(p.ok).map(i=>BY[i]);
+if(k==="pos")L=(S.ph===3?["po","pe"]:["cz","pe"]).map(i=>BY[i]);
+return L.map(m=>[m,p.f?p.why:(p.ok[m.id]||"Suave y de fácil digestión.")])}
+const RK={"Principales":0,"Parrilla y mar":0,"Entradas":1,"Postres":2,"Bebidas":3};
+function pick(k,n,cat){let L=cands(k).filter(([m])=>!bad(m)&&(S.bud==null||m.p<=S.bud)&&(!cat||cat.includes(m.c)));
+if(k!=="pos")L.sort((a,b)=>(S.pref.includes(b[0].id)-S.pref.includes(a[0].id))||(RK[a[0].c]-RK[b[0].c]));
+const fresh=L.filter(([m])=>!S.shown.has(m.id));return{items:(fresh.length?fresh:L).slice(0,n),recycled:!fresh.length&&L.length>0}}
+const line=(lab,[m,w])=>{S.shown.add(m.id);return `• ${lab}: <b>${m.n}</b> (${cop(m.p)}) — ${m.d} <i>${w}</i>`};
+function phaseTxt(ph){return ph===0?"En esta fase suelen indicarse caldos claros y colados, agua, infusiones suaves y gelatina sin azúcar. En ALBA puedes pedir al chef un <b>caldo claro de verduras o de pollo</b>, bien colado y sin grasa, y una <b>infusión tibia</b> de manzanilla o hierbabuena. Toma sorbitos pequeños y frecuentes, sin gas, cafeína ni azúcar.":"Aquí va muy bien nuestra <b>Crema de Zapallo & Coco</b> (calabaza asada), pedida bien licuada y colada, sin semillas, jengibre ni picante: suave, tibia y baja en grasa. Para beber, agua natural o una infusión tibia. Si tu médico lo permite, el chef puede añadir un poquito de proteína suave al caldo."}
+function recMsg(){
+const ks=S.pf.filter(k=>!(k==="pos"&&S.ph===null)),multi=ks.length>1,out=[];let empty=false,rec=false;
+if(S.cat){const r=S.cat.map(c=>pick(ks[0],1,[c]).items[0]).filter(Boolean);S.cat=null;
+return r.length?"Para completar tu comida, mira esto:<br>"+r.map(i=>line(i[0].c==="Postres"?"Postre":"Entrada",i)).join("<br>")+"<br><br>¿Cómo lo ves? ¿Lo dejamos así o lo ajustamos a tus gustos?":"Con lo que me has contado no tengo una entrada o postre que te pueda recomendar con tranquilidad. Puedo consultarlo con el chef: "+WAL+". ¿Quieres revisar otra parte del menú?"}
+ks.forEach(k=>{const p=PR[k];
+if(k==="pos"&&S.ph<2){out.push(`<b>${p.i} ${p.n}</b><br>${phaseTxt(S.ph)}`);return}
+const r=pick(k,multi?1:2,null);if(!r.items.length){empty=true;return}
+if(r.recycled)rec=true;
+const L=r.items.map((i,n)=>line(n?"Otra idea":"Comida",i));
+out.push((multi?`<b>${p.i} ${p.n}</b><br>`:"")+L.join("<br>")+`<br>• Bebida: ${p.dr[S.step%p.dr.length]}.<br>💡 ${p.tips[S.step%p.tips.length]}`)});
+if(empty&&!out.length){return "Con esos filtros no me queda un plato que te pueda recomendar con tranquilidad. ¿Probamos con otro presupuesto o con otro ingrediente? También puedes consultarle al chef: "+WAL+"."}
+const med=ks.includes("pos")?"Si tienes dudas sobre en qué fase estás, lo mejor es confirmarlo con tu médico.":ks.some(k=>["dia","emb","hip"].includes(k))?"Son ideas gastronómicas; tu médico o nutricionista tiene la última palabra.":"";
+const h=(rec?"Ya te mostré lo más adecuado para eso, así que te repito lo mejor que tengo:<br><br>":ks.includes("pos")&&S.ph>=2?"Para estos días, la clave es una digestión muy liviana: poca grasa, nada de irritantes y proteína suave. ¿Qué te parece algo así?<br><br>":"¿Qué te parece si probamos algo así?<br><br>")+out.join("<br><br>")+(med?`<br><br><i>${med}</i>`:"")+"<br><br>"+CQ[S.step%3];S.step++;return h}
+function respond(t){const it=parse(t);
+if(it.reset){Object.assign(S,{pf:[],ph:null,bud:null,dis:[],shown:new Set(),pref:[],said:new Set(),cat:null,step:0});bot("¡Claro, empecemos de nuevo! 😊 ¿Cómo te sientes hoy y qué necesitas?");opts(START);return}
+const mood=it.mood==="low"?"Lamento que no te sientas del todo bien; vamos con calma y sin afán. ":it.mood==="ok"?"¡Qué bueno saberlo! ":"";
+if(it.book){bot("¡Con gusto! Para reservar o consultar al chef por tu dieta, "+WAL+" al +57 310 892 4501. ¿Quieres que antes terminemos de armar tu menú?");opts(["Seguir armando mi menú","Gracias, eso es todo"]);return}
+if(it.thanks&&!it.ch){bot("¡Con mucho gusto! Que disfrutes tu comida y te sientas muy bien. Si quieres reservar, "+WAL+". ¡Aquí estaré para lo que necesites! 😊");opts(["Empezar de nuevo"]);return}
+if(it.budget&&!it.ch){bot("¡Claro! ¿Cuánto te gustaría invertir por plato, más o menos?");opts(["Hasta $40.000","Hasta $50.000","Hasta $70.000","Sin límite de presupuesto"]);return}
+if(!S.pf.length){bot(mood+(S.bud?`Perfecto, tendré en cuenta tu presupuesto (hasta ${cop(S.bud)} por plato). `:"")+"Cuéntame un poco más 😊 ¿Cómo te sientes hoy y qué necesitas? Puedo ayudarte si cuidas tu azúcar, vienes de una cirugía, eres vegetariano o vegano, o tienes otra restricción (celiaquía, lactosa, embarazo, hipertensión).");opts(START);return}
+if(S.pf.includes("pos")&&S.ph===null){
+bot(mood+"Uy, entiendo perfectamente: los primeros días después de una cirugía piden mucho cuidado y a veces da un poco de susto comer. ¿Cómo te has sentido hoy?"+(/vesicula/.test(norm(HIST.join(" ")+t))?"<br><br>Después de una cirugía de vesícula la clave es una digestión muy liviana: poca grasa, nada de irritantes y buena proteína suave.":"")+"<br><br>Para orientarte bien, cuéntame: ¿tu médico te indicó dieta líquida, blanda o ya estás pasando a sólidos?");opts(PHO);return}
+if(it.yes&&!it.ch&&S.shown.size){bot("¡Qué alegría que te guste! 😊 ¿Quieres que te ayude a completar el menú con una entrada y un postre, o prefieres reservar?");opts(["Armar entrada y postre","Reservar por WhatsApp","Gracias, eso es todo"]);return}
+if(!it.ch&&S.shown.size){bot(mood+"Cuéntame más 🙂 ¿Qué ajustamos? Puedo cambiar el plato, adaptarlo a tu presupuesto o evitar algún ingrediente.");opts(AFTER);return}
+const emp=S.pf.filter(k=>!S.said.has(k)&&EMP[k]).map(k=>EMP[k]);S.pf.forEach(k=>S.said.add(k));
+bot((mood+emp.join(" ")+(mood||emp.length?"<br><br>":""))+recMsg());opts(AFTER)}
+function typing(cb){const d=bot("<i>Nutri está escribiendo…</i>");setTimeout(()=>{d.remove();cb()},650)}
+async function handle(txt){me(txt);
+let s=null;try{s=await claude.use("sample")}catch(e){}
+if(!s){typing(()=>respond(txt));return}
+HIST.push("Usuario: "+txt);const d=bot("<i>Nutri está escribiendo…</i>");
+try{const r=await s(SYSN+"\n\nCONVERSACIÓN:\n"+HIST.slice(-12).join("\n")+"\nResponde ahora como Nutri, solo con el texto de la respuesta.",{cache:false,modelTier:"quick",onText:({text})=>{d.innerHTML=fmt(text);NL.scrollTop=1e9}});
+d.innerHTML=fmt(r.text);HIST.push("Nutri: "+r.text)}catch(e){HIST.pop();d.remove();typing(()=>respond(txt))}}
+function openN(){$("nchat").classList.add("open");if(!NL.children.length){bot("¡Hola! Soy <b>Nutri</b>, tu anfitrión gastronómico en ALBA 😊 Me encanta ayudar a cada persona a encontrar el plato ideal para cómo se siente hoy. ¿Cómo estás y qué necesitas? Cuéntame con confianza: si cuidas tu azúcar, vienes de una cirugía, eres vegetariano o vegano, o quieres algo rico y ligero.");opts(START)}}
+$("nfab").onclick=openN;$("hn").onclick=e=>{e.preventDefault();openN()};
+$("nclose").onclick=()=>$("nchat").classList.remove("open");
+$("nchat").addEventListener("click",e=>{if(e.target.id==="nchat")$("nchat").classList.remove("open")});
+$("nopts").addEventListener("click",e=>{const b=e.target.closest("button");if(b)handle(b.textContent)});
+$("nf").addEventListener("submit",()=>{const v=$("nq").value.trim();if(v){$("nq").value="";handle(v)}});
+</script></body></html>
